@@ -57,8 +57,18 @@ if __name__ == "__main__":
             continue
         
         if data.get("is_weak"):
-            print("[WEAK] %s cannot be converted to SDA's maFile..." % name)
-            continue
+            if not ";" in name:
+                print("[WEAK] %s cannot be converted to SDA's maFile..." % name)
+                continue
+
+            weak_data = {
+                "account_name": name.split(";")[0],
+                "shared_secret": data["maFile"].get("shared_secret"),
+                "identity_secret": data["maFile"].get("identity_secret"),
+            }
+
+            data["maFile"].update(weak_data)
+
         
         with open(SDAPath + (data["sda_name"] or name), "w", encoding="utf-8") as file:
             json.dump(data["maFile"], file, indent=2)
